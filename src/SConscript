@@ -1,1 +1,5 @@
+# -*- python -*-
+Import('env')
 
+pdf = env.Latex('resume.tex')
+env.Default(pdf)
