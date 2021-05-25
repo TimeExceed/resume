@@ -28,78 +28,78 @@
     \item 知乎: \url{https://www.zhihu.com/people/tao-yun-feng}
 \end{itemize}
 
-\section{技能点}
+\section{关于硬件产品云端一体的若干思考}
 
-\subsection{软件技术}
-
-擅长技术写作和技术讲座。
-平生未有一败。
-曾被阿里云评为最佳讲师。
-
+今天来看，孤立的硬件产品已经很少见了。
+云和端的联动成为主流。
+那么架构中有三个组件需要思考：
 \begin{enumerate}
-    \item C++
-        \begin{itemize}
-            \item 为云栖社区准备的C++讲座（与人合讲）: \url{https://developer.aliyun.com/article/581180}
-            \item 阿里云表格存储的C++ SDK: \url{https://github.com/TimeExceed/aliyun-tablestore-cpp-sdk}
-        \end{itemize}
-    \item Rust
-        \begin{itemize}
-            \item 在依图硬件部落地。
-            \item 一个面向架构师的介绍：\url{https://github.com/TimeExceed/cert_rust}
-        \end{itemize}
-    \item Python
-        \begin{itemize}
-            \item 从2.3版本开始入手。
-            \item 一个自用的做图工具：\url{https://github.com/TimeExceed/fathom}
-        \end{itemize}
-    \item 其他编程语言可以看\href{https://www.zhihu.com/question/403828823/answer/1310069487}{这篇回答}。
-    \item 系统
-        \begin{itemize}
-            \item 在阿里云期间从事过分布式调度（伏羲）、一致性（女娲）、存储和数据库（表格存储）的研发。
-                \begin{itemize}
-                    \item 一份面向新人的存储技术介绍：\url{https://github.com/TimeExceed/modern_db_part0}
-                \end{itemize}
-            \item 在依图主管三年的嵌入式（摄像头、边缘盒子）软件研发。
-            \item 在依图主管半年PaaS(K8S)研发。
-        \end{itemize}
-    \item 软件工程
-        \begin{itemize}
-            \item 整体观点：\url{https://github.com/TimeExceed/design-principles}
-            \item 项目管理的Kanban方法: \url{https://github.com/TimeExceed/kanban}
-            \item 测试：
-                \begin{itemize}
-                    \item 测试理论：\url{https://github.com/TimeExceed/test-theory-intro}
-                    \item TDD: \url{https://github.com/TimeExceed/tdd_slides}
-                \end{itemize}
-        \end{itemize}
+    \item 端上关注稳定性和性能，兼顾升级的便利性
+    \item 云上关注接入设备的数量和多样性
+    \item 云和端之间的网络的可达性和性能
 \end{enumerate}
 
-\subsection{管理}
+\subsection{端上关注稳定性和性能，兼顾升级的便利性}
 
-擅长把草台班子带成正规军。
+我在依图的实践大致可以分成技术手段和管理手段。
+技术手段包括：
 \begin{itemize}
-    \item 2012-2013年（阿里云）带女娲（分布式一致性）团队。
-        其中一人现已升为P8。
-    \item 2018-2020年接手依图硬件部的软件研发团队。
-        接手之初，团队士气很高，但做事没有章法、没有缓急，加班很多而效率不高。
-        用三个月时间摸清了团队能力的短板，针对性地制订了技术战略和招聘战略。
-        在2019年团队扩充到近30人，有力地完成了三条战略产品线的研发任务。
-    \item 2020年接手PaaS和运维平台两个团队。
-        我敏锐地发现前任对两个团队的边界的划分不当，推动两个团队合并，同时免去运维平台小组长的管理职务。
-        完成以上两个动作没有引起团队士气的任何问题。
+    \item 推行Rust
+        \begin{itemize}
+            \item Rust的性能和C/C++齐平的同时强调内存安全。
+            \item 这里是我写的一个面向架构师的介绍：\url{https://github.com/TimeExceed/cert_rust}
+        \end{itemize}
+    \item 在有条件的情况下使用容器技术，方便部署和升级。
+    \item 核心逻辑和展示层分离，供应商提供的逻辑和自己的逻辑分离。
+        分离到不同的容器里，至少是不同的进程里。
+        相互之间以unix domain socket通讯。
+        其背后的思想是：一，面对不同的进化压力的组件不宜合在一个进程内；二，责任切分清楚，谁的代码出稳定性问题一目了然。
+\end{itemize}
+管理手段包括：
+\begin{itemize}
+    \item 干掉软件测试团队，开发自己测试自己发布。
+    \item 强调回归测试。
+    \item 强调设计review和代码review。
+    \item 强调“未知死，焉知生”，意思是，如果开发没有想过自己的代码什么时候会死，死了之后谁来处理、如何处理，那么这份代码也不会工作正常。
+\end{itemize}
+以上这些措施背后的理论思考我总结在\href{https://github.com/TimeExceed/design-principles/blob/master/se-principles.notes.pdf}{这份幻灯片}里了。
+最终的成果是，
+\begin{itemize}
+    \item 依图的硬件产品没有一次内存问题导致的core dump发生在我团队的代码里。
+    \item 我团队代码对性能的overhead几乎看不到。
+        比如在海思3559上依图算法做到16路人脸抓拍，包上我的业务代码之后，还是16路人脸抓拍。
 \end{itemize}
 
-\subsection{经济学}
+\subsection{云上关注接入设备的数量和多样性}
 
-野生经济学家。
-偏微观的产业组织理论。
-擅长拍卖理论和机制设计。
-有
+云上的关注点有两个：一是接入的设备绝对数量多，二是接入设备的类型多。
 \begin{itemize}
-    \item 婚姻经济学二讲：\href{https://github.com/TimeExceed/sexsel/blob/master/sexsel.notes.pdf}{第一讲}
-    \item 货币一讲
-    \item 反垄断经济学十讲
+    \item 设备的类型多意味着，设备接入应该是云上独立的一层。
+        这一层对云上业务暴露统一的接口，屏蔽掉设备类型不同导致的协议差异。
+        包括由设备主动发起连接还是由云主动发起连接的差异。
+    \item 接入设备的绝对数量多，我的应对方法是将接入层分成调度节点和接入节点。
+        如果云被动接受设备的连接，那么还有分发节点。
+        接入节点本身无状态，完全根据调度节点的指令工作，因而可以非常轻量地水平扩展。
+        而通常接入设备的数量的变化并不大，并且设备之间数据流量的差异和同一设备的数据流量在时间上也较平稳，因此调度节点做调度决策可以慢慢来。
+        于是调度节点的开发难度降低不少。
 \end{itemize}
+
+\subsection{云和端之间的网络的可达性和性能}
+
+AIoT和传统传感器IoT场景相同的点在于，数据以流式数据为主，间杂以少量控制指令。
+而不同的点在于
+\begin{itemize}
+    \item 单一AIoT设备的数据量更大、数据流更多。
+    \item AIoT的网络环境通常更不可控。
+        有时网络稳定性很差。
+\end{itemize}
+针对这些问题，我在依图的实践采用HTTP/2+TLS。
+\begin{itemize}
+    \item HTTP/2的长连接特性可以减少TCP冷启动带来的吞吐量下降。
+    \item HTTP/2的单连接多流特性也满足AIoT设备需求，不必在应用层硬将多条数据流编码进一个数据流。
+    \item 同时HTTP/2的其他细节比如ping frame和流控也和AIoT的场景相匹配。
+\end{itemize}
+并且还留有一个HTTP/3（即HTTP/2 over UDP）以应对更极端的弱网环境的后手。
 
 \section{履历}
 
