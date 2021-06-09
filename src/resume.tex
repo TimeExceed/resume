@@ -28,6 +28,53 @@
     \item 知乎: \url{https://www.zhihu.com/people/tao-yun-feng}
 \end{itemize}
 
+\section{Highlights}
+
+在依图基础设施部主持了CodeCraft和Gringotts两个项目的设计和开发。
+
+\subsection*{CodeCraft}
+
+CodeCraft是一个内部使用的数据安全产品。
+整件事情的难点不在这个那个技术，而在细致周到。
+我们结合了依图数据使用的现状，确定了以下设计：
+\begin{itemize}
+    \item 一个CodeCraft实例是一个独立的网络域，其内部互通而对外除非预先设计过的通路，一律切断。
+    \item 用户通过远程桌面进入CodeCraft实例工作。并且有方便的数据进入通路。
+        \begin{itemize}
+            \item 我们识别出用户的日常工作经常会去下载一些什么，比如\textsl{apt install}或者\textsl{git clone}。
+                为此我们专门设计了HTTP的通路。
+        \end{itemize}
+    \item 有专门设计的数据出来的通路，满足审批、审计等需要。
+\end{itemize}
+
+\subsection*{Gringotts}
+
+Gringotts是一个数据集的实现。
+
+依图训练用数据大量以文件形式存放在CephFS上。
+这带来了许多问题：
+\begin{itemize}
+    \item 大量的小文件导致存储放大严重。
+    \item 大量的小文件导致对CephFS元数据的压力。
+    \item 文件本身缺少合适的管理。
+        比如我现在要训练一个识别男人的模型，那么如何从数billion的文件里把包含男人的照片摘选出来呢？
+        文件系统本身对这块并没有针对性的设计。
+    \item 具体到CephFS，缺少对文件内容的版本管理。
+        故而算法工程师必须小心谨慎地使用。
+\end{itemize}
+然而小文件使用便利，生态周全。
+比如GitHub上有大量算法直接读取jpeg，算法工程师复制下来直接就可以跑。
+
+为了解决以上问题，我们设计了
+\begin{itemize}
+    \item 每个数据集都是Btrfs over RBD。
+        由此既保持了文件的界面，又达到了极小的存储放大。
+    \item 在使用中，用户对数据的写入会保存在本地的OverlayFS内。
+        基于此，我们实现了完整的数据集事务和分支。
+    \item 最后，我们将每个数据集内的数据的元数据和标注都导入搜索引擎。
+        用户在命令行上发出搜索的指令，其结果会自动出现在指定的目录下（FUSE挂载）。
+\end{itemize}
+
 \section{技能点}
 
 \subsection{软件技术}
@@ -89,17 +136,6 @@
         完成以上两个动作没有引起团队士气的任何问题。
 \end{itemize}
 
-\subsection{经济学}
-
-野生经济学家。
-偏微观的产业组织理论。
-擅长拍卖理论和机制设计。
-有
-\begin{itemize}
-    \item 婚姻经济学二讲：\href{https://github.com/TimeExceed/sexsel/blob/master/sexsel.notes.pdf}{第一讲}
-    \item 货币一讲
-    \item 反垄断经济学十讲
-\end{itemize}
 
 \section{履历}
 
